@@ -1,0 +1,36 @@
+---
+- hosts: all
+  remote_user: root
+
+  tasks:
+  - name: Make directory nest.
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0755'
+      owner: root
+      group: root
+    with_items:
+      - /opt/scripts
+  - name: Copy script.
+    copy:                                                                      
+      src: /etc/ansible/files/scripts/host.sh
+      dest: /opt/scripts
+      mode: 0700
+  - name: Run script.
+    shell: /opt/scripts/host.sh
+  - name: Find info file.
+    shell: ls / | grep .info
+    register: results
+  - name: Fetch info file.
+    fetch:
+      src: "/{{ results.stdout }}"
+      dest: /opt/common/STIG/host-info/
+      flat: yes
+  
+- hosts: chs-l-satellite
+  remote_user: root
+  
+  tasks:
+  - name: Combine host info.
+    shell: cat /opt/common/STIG/host-info/* > /opt/common/STIG/host-info/hosts.info

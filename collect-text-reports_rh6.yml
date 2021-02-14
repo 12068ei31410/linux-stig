@@ -1,0 +1,15 @@
+---
+- hosts: rhel6
+  remote_user: root
+
+  tasks:
+
+  - name: Find results file
+    shell: ls /usr/local/etc/stig/scripts | grep `hostname -s`
+    register: results
+
+  - name: Fetch results file
+    fetch:
+     src: "/usr/local/etc/stig/scripts/{{ results.stdout }}"
+     dest: /opt/common/STIG/text-results/RHEL6/V2R2/
+     flat: yes

@@ -1,0 +1,18 @@
+---
+- hosts: rhel6
+  remote_user: root
+
+  tasks:
+
+  - name: SCANS IN PROGRESS
+    shell: ./scan-NR-rh6.sh
+    async: 3600
+    poll: 60
+    args:
+      chdir: /usr/local/etc/stig/scripts
+      executable: /bin/bash
+  - name: GATHERING RESULTS
+    shell: ./combine-NR-results-rh6.sh
+    args:
+      chdir: /usr/local/etc/stig/scripts
+      executable: /bin/bash
